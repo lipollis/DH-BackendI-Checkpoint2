@@ -1,4 +1,4 @@
-<div align="right"> <img src="https://github.com/lipollis/Imagens-Git/blob/main/sun%20-%20git.jpg" width="50px"/> </div>
+<div align="center"><img src="https://github.com/lipollis/Imagens-Git/blob/main/banner_assinatura.svg" /></div>
 
 <h1 align="center"> Checkpoint II </h1>
 <h2 align="center"> Backend I - CTD:Digital House </h2>
