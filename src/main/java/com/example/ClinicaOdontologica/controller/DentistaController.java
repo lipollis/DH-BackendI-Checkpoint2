@@ -1,12 +1,13 @@
 package com.example.ClinicaOdontologica.controller;
 
 import com.example.ClinicaOdontologica.dto.DentistaDTO;
-import com.example.ClinicaOdontologica.dto.PacienteDTO;
 import com.example.ClinicaOdontologica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // ASSINATURAS
 @RestController
@@ -46,22 +47,37 @@ public class DentistaController {
         return ResponseEntity.badRequest().body("Dentista não encontrado");
     }
 
-    @GetMapping("/buscarTodos")
+    @GetMapping("/buscartodos")
     public ResponseEntity buscarTodos(){
+        List<DentistaDTO> dentistaDTOList = dentistaService.buscarTodos();
         logger.info("Buscando todos os registros de dentista...");
         return ResponseEntity.ok(dentistaService.buscarTodos());
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity atualizar(@RequestBody DentistaDTO dentistaDTO){
-        logger.info("Registro atualizado.");
-        return ResponseEntity.ok(dentistaService.atualizar(dentistaDTO));
+    public ResponseEntity atualizar(@RequestBody DentistaDTO dentista){
+        DentistaDTO dentistaAtual = dentistaService.atualizar(dentista);
+        if(dentistaAtual !=null){
+            logger.info("Registro atualizado.");
+            return ResponseEntity.ok(dentistaAtual);
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void delete(@RequestBody Integer id) {
-        logger.info("Registro deletado.");
-        dentistaService.deletar(id);
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<String> deletar(@PathVariable Integer id){
+
+        ResponseEntity<String> response = null;
+
+        DentistaDTO dentistaDeletado = dentistaService.buscarId(id);
+        if(dentistaDeletado != null){
+            logger.info("Registro deletado. ");
+            dentistaService.deletar(id);
+        } else{
+            logger.info("Registro não encontrado. ");
+            response = ResponseEntity.ok("Registro não encontrado.");
+        }
+        return response;
     }
 
 }

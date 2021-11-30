@@ -38,7 +38,6 @@ public class PacienteServiceImpl implements OdontoService<PacienteDTO> {
         // BUSCA O ENDEREÇO DENTRO DE ENTITY, MANDA PARA REPOSITORY, O QUE RETORNA SOBREESCREVE ENTITY
         pacienteEntity.setEndereco(enderecoRepository.saveAndFlush(pacienteEntity.getEndereco())); //salvar o endereço
 
-
         return new PacienteDTO(pacienteRepository.save(pacienteEntity));
     }
 
@@ -64,21 +63,24 @@ public class PacienteServiceImpl implements OdontoService<PacienteDTO> {
 
     @Override
     public PacienteDTO atualizar(PacienteDTO paciente) {
-        // BUSCA OS PACIENTES QUE NÃO POSSUEM O ID E RETORNA NULO
+        // BUSCA OS PACIENTES PARA ENTÃO ATUALIZAR
         PacienteEntity pacienteEntity = pacienteRepository.getById(paciente.getId());
-        if(pacienteEntity == null){
-            return null;
-        }
+        EnderecoEntity enderecoEntity = enderecoRepository.getById(paciente.getId());
 
-        // CASO O PACIENTE POSSUA O ID, SET ESSE VALOR, COMPARA COM ENDEREÇO QUAL O CORRESPONDENTE
-        paciente.setId(paciente.getId());
-        EnderecoEntity endereco = enderecoRepository.getById(pacienteEntity.getId());
-        // ATUALIZA EM PACIENTE O ENDEREÇO
-        paciente.getEndereco().setId(endereco.getId());
-        enderecoRepository.saveAndFlush(pacienteEntity.getEndereco());
-        PacienteEntity pacienteAtual = new PacienteEntity(paciente);
-        //pacienteRepository.saveAll(pacienteRepository.findAllById(id)),pacienteAtual);
-        return paciente;
+        if(paciente.getNome() != null && paciente.getSobrenome() != null){
+            pacienteEntity.setNome(paciente.getNome());
+            pacienteEntity.setSobrenome(paciente.getSobrenome());
+        }
+        if(paciente.getEndereco() != null){
+            // CASO O PACIENTE POSSUA O ID, SET ESSE VALOR, COMPARA COM ENDEREÇO QUAL O CORRESPONDENTE
+            enderecoEntity.setRua(paciente.getEndereco().getRua());
+            enderecoEntity.setNumero(paciente.getEndereco().getNumero());
+            enderecoEntity.setCidade(paciente.getEndereco().getCidade());
+            //enderecoEntity.setEstado(paciente.getEndereco().getEstado());
+            pacienteEntity.setEndereco(enderecoEntity);
+        }
+        PacienteDTO pacienteAtual = new PacienteDTO(pacienteRepository.saveAndFlush(pacienteEntity));
+        return pacienteAtual;
     }
 
     @Override

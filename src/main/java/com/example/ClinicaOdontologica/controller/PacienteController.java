@@ -65,7 +65,6 @@ public class PacienteController {
     }
 
     @DeleteMapping("/deletar/{id}")
-    //public void deletar(@PathVariable Integer id) {
         public ResponseEntity<String> deletar(@PathVariable Integer id){
 
         ResponseEntity<String> response = null;
